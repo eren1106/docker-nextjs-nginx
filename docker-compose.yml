@@ -1,0 +1,21 @@
+version: '3'  # Define the version of the Docker Compose file format
+
+services:  # Define the services that will be created and run
+
+  nextjs:  # Next.js service that will run the Next.js application
+    build: .  # Build the image using the Dockerfile located in the current directory
+    container_name: nextjs  # Name the container 'nextjs' for easier management
+  
+  nginx:  # Nginx service that will act as a reverse proxy for the Next.js app
+    image: nginx:alpine  # Use the official Nginx Alpine image for a lightweight setup
+    container_name: nginx  # Name the container 'nginx' for easier management
+    ports:  # Map ports between the host machine and the Nginx container
+      - "80:80"  # Map port 80 on the host to port 80 on the Nginx container (standard HTTP port)
+    
+    # Mount the custom Nginx configuration file from the local machine into the container
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Custom Nginx config file to set up reverse proxy
+    
+    # Specify that the Nginx service should wait for the Next.js service to start before running
+    depends_on:
+      - nextjs  # Nginx depends on Next.js, ensuring it won't start until Next.js is up
